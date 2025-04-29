@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:password_manager/models/password.dart';
+import 'package:password_manager/screens/login_page.dart';
+import 'package:password_manager/screens/profile_page.dart';
 import 'package:password_manager/services/firestore_service.dart';
 import 'package:password_manager/widgets/password_card.dart';
 import 'package:uuid/uuid.dart';
@@ -13,7 +16,8 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _fabController;
   late Animation<double> _fabAnimation;
   late Animation<double> _titleAnimation;
@@ -82,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 Colors.blue.withOpacity(0.8),
                 Colors.cyan.withOpacity(0.8),
                 Colors.green.withOpacity(0.8),
-                Colors.greenAccent.withOpacity(0.8)
+                Colors.greenAccent.withOpacity(0.8),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -95,7 +99,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 offset: const Offset(0, 6),
               ),
             ],
-            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            border:
+                Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
@@ -111,26 +116,38 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          password == null ? 'Add Credential' : 'Edit Credential',
+                          password == null
+                              ? 'Add Credential'
+                              : 'Edit Credential',
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            shadows: [Shadow(color: Colors.black.withOpacity(0.3), blurRadius: 4)],
+                            shadows: [
+                              Shadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 4)
+                            ],
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildDialogTextField(usernameController, 'Username', Icons.person),
+                        buildDialogTextField(
+                            usernameController, 'Username', Icons.person),
                         const SizedBox(height: 12),
-                        _buildDialogTextField(passwordController, 'Password', Icons.lock, isPassword: true),
+                        buildDialogTextField(
+                            passwordController, 'Password', Icons.lock,
+                            isPassword: true),
                         const SizedBox(height: 12),
-                        _buildDialogTextField(linkController, 'Link (optional)', Icons.link, isOptional: true),
+                        buildDialogTextField(
+                            linkController, 'Link (optional)', Icons.link,
+                            isOptional: true),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
                           value: selectedSocialMedia,
                           decoration: InputDecoration(
                             labelText: 'Platform',
-                            prefixIcon: const Icon(Icons.share, color: Colors.white),
+                            prefixIcon:
+                                const Icon(Icons.share, color: Colors.white),
                             filled: true,
                             fillColor: Colors.white.withOpacity(0.25),
                             border: OutlineInputBorder(
@@ -149,7 +166,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               value: value,
                               child: Row(
                                 children: [
-                                  Icon(socialMediaIcons[value], color: Colors.cyan),
+                                  Icon(socialMediaIcons[value],
+                                      color: Colors.cyan),
                                   const SizedBox(width: 10),
                                   Text(
                                     value,
@@ -166,7 +184,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           onChanged: (String? newValue) {
                             selectedSocialMedia = newValue;
                           },
-                          validator: (value) => value == null ? 'Please select a platform' : null,
+                          validator: (value) =>
+                              value == null ? 'Please select a platform' : null,
                         ),
                         const SizedBox(height: 20),
                         Row(
@@ -184,23 +203,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                             ),
                             const SizedBox(width: 12),
-                            GestureDetector(
-                              onTap: () async {
+                            ElevatedButton(
+                              onPressed: () async {
                                 if (formKey.currentState!.validate()) {
+                                  final user =
+                                      FirebaseAuth.instance.currentUser;
+                                  if (user == null) {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => const LoginPage()));
+                                    return;
+                                  }
                                   final passwordModel = PasswordModel(
                                     id: password?.id ?? const Uuid().v4(),
+                                    userId: user.uid,
                                     username: usernameController.text,
                                     password: passwordController.text,
                                     socialMedia: selectedSocialMedia!,
                                     link: linkController.text,
-                                    createdAt: password?.createdAt ?? DateTime.now(),
+                                    createdAt:
+                                        password?.createdAt ?? DateTime.now(),
                                     updatedAt: DateTime.now(),
                                   );
                                   try {
                                     if (password == null) {
-                                      await _firestoreService.addPassword(passwordModel);
+                                      await _firestoreService
+                                          .addPassword(passwordModel);
                                     } else {
-                                      await _firestoreService.updatePassword(passwordModel);
+                                      await _firestoreService
+                                          .updatePassword(passwordModel);
                                     }
                                     Navigator.pop(context);
                                   } catch (e) {
@@ -210,11 +242,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   }
                                 }
                               },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                elevation: 0,
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                              ),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.blue, Colors.cyan],
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.blue.withOpacity(0.9),
+                                      Colors.cyan.withOpacity(0.9),
+                                      Colors.green.withOpacity(0.9),
+                                      Colors.greenAccent.withOpacity(0.9),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
@@ -225,6 +273,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     ),
                                   ],
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
                                 child: Text(
                                   password == null ? 'Save' : 'Update',
                                   style: GoogleFonts.inter(
@@ -249,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildDialogTextField(
+  Widget buildDialogTextField(
       TextEditingController controller, String label, IconData icon,
       {bool isPassword = false, bool isOptional = false}) {
     return AnimatedContainer(
@@ -292,142 +342,168 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           fontSize: 15,
           color: Colors.white,
         ),
-        validator: isOptional ? null : (value) => value!.isEmpty ? 'Enter $label' : null,
+        validator: isOptional
+            ? null
+            : (value) => value!.isEmpty ? 'Enter $label' : null,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blue.withOpacity(0.9),
-              Colors.cyan.withOpacity(0.9),
-              Colors.green.withOpacity(0.9),
-              Colors.greenAccent.withOpacity(0.9),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const LoginPage();
+        }
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            flexibleSpace: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue.withOpacity(0.9),
+                    Colors.cyan.withOpacity(0.9),
+                    Colors.green.withOpacity(0.9),
+                    Colors.greenAccent.withOpacity(0.9),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            title: Text(
+              'Password Vault',
+              style: GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+                shadows: [
+                  Shadow(
+                    blurRadius: 16.0,
+                    color: Colors.black.withOpacity(0.2),
+                    offset: const Offset(2.0, 2.0),
+                  ),
+                ],
+              ),
+            ),
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person, color: Colors.black, size: 30),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfilePage(),),
+                  );
+                },
+              ),
             ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-                child: AnimatedBuilder(
-                  animation: _titleAnimation,
-                  builder: (context, child) {
-                    return Transform.scale(
-                      scale: _titleAnimation.value,
-                      child: Text(
-                        'Password Vault',
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 1.5,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 16.0,
-                              color: Colors.black.withOpacity(0.4),
-                              offset: const Offset(2.0, 2.0),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: StreamBuilder<List<PasswordModel>>(
+                    stream: _firestoreService.getPasswords(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Something went wrong',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 18,
+                              color: Colors.black.withOpacity(0.9),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                child: StreamBuilder<List<PasswordModel>>(
-                  stream: _firestoreService.getPasswords(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          'Something went wrong',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 18,
-                            color: Colors.white,
                           ),
-                        ),
-                      );
-                    }
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator(color: Colors.white));
-                    }
-                    final passwords = snapshot.data!;
-                    if (passwords.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No credentials yet. Add one!',
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: passwords.length,
-                      itemBuilder: (context, index) {
-                        final password = passwords[index];
-                        return PasswordCard(
-                          password: password,
-                          index: index,
-                          onEdit: () => _showAddPasswordDialog(password: password),
                         );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: ScaleTransition(
-        scale: _fabAnimation,
-        child: GestureDetector(
-          onTap: () => _showAddPasswordDialog(),
-          child: Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Colors.blue, Colors.cyan],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.5),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: Colors.cyan.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                      }
+                      if (!snapshot.hasData) {
+                        return const Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.black));
+                      }
+                      final passwords = snapshot.data!;
+                      if (passwords.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No credentials yet. Add one!',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: Colors.black.withOpacity(0.9),
+                            ),
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: passwords.length,
+                        itemBuilder: (context, index) {
+                          final password = passwords[index];
+                          return PasswordCard(
+                            password: password,
+                            index: index,
+                            onEdit: () =>
+                                _showAddPasswordDialog(password: password),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
-              border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
-            ),
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 32,
             ),
           ),
-        ),
-      ),
+          floatingActionButton: ScaleTransition(
+            scale: _fabAnimation,
+            child: FloatingActionButton(
+              onPressed: () => _showAddPasswordDialog(),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.withOpacity(0.9),
+                      Colors.cyan.withOpacity(0.9),
+                      Colors.green.withOpacity(0.9),
+                      Colors.greenAccent.withOpacity(0.9),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.5),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                    BoxShadow(
+                      color: Colors.cyan.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  border: Border.all(
+                      color: Colors.white.withOpacity(0.3), width: 2),
+                ),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -24,7 +24,8 @@ class PasswordCard extends StatefulWidget {
   _PasswordCardState createState() => _PasswordCardState();
 }
 
-class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderStateMixin {
+class _PasswordCardState extends State<PasswordCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotationAnimation;
@@ -93,7 +94,12 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
           duration: const Duration(milliseconds: 400),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue.withOpacity(0.8), Colors.cyan.withOpacity(0.8), Colors.green.withOpacity(0.8), Colors.greenAccent.withOpacity(0.8)],
+              colors: [
+                Colors.blue.withOpacity(0.8),
+                Colors.cyan.withOpacity(0.8),
+                Colors.green.withOpacity(0.8),
+                Colors.greenAccent.withOpacity(0.8)
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -105,7 +111,8 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                 offset: const Offset(0, 6),
               ),
             ],
-            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            border:
+                Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
@@ -123,7 +130,11 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
-                        shadows: [Shadow(color: Colors.black.withOpacity(0.3), blurRadius: 4)],
+                        shadows: [
+                          Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 4)
+                        ],
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -151,8 +162,8 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                           ),
                         ),
                         const SizedBox(width: 12),
-                        GestureDetector(
-                          onTap: () async {
+                        ElevatedButton(
+                          onPressed: () async {
                             setState(() {
                               _isDeleting = true;
                             });
@@ -160,9 +171,11 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                               _opacity = 0.0;
                               _offsetX = -120.0;
                             });
-                            await Future.delayed(const Duration(milliseconds: 400));
+                            await Future.delayed(
+                                const Duration(milliseconds: 400));
                             try {
-                              await FirestoreService().deletePassword(widget.password.id);
+                              await FirestoreService()
+                                  .deletePassword(widget.password.id);
                               Fluttertoast.showToast(
                                 msg: 'Credential deleted',
                                 toastLength: Toast.LENGTH_SHORT,
@@ -181,11 +194,27 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                             }
                             Navigator.pop(context);
                           },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            elevation: 0,
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Colors.blue, Colors.cyan],
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.blue.withOpacity(0.9),
+                                  Colors.cyan.withOpacity(0.9),
+                                  Colors.green.withOpacity(0.9),
+                                  Colors.greenAccent.withOpacity(0.9),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
@@ -196,6 +225,8 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                 ),
                               ],
                             ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             child: Text(
                               'Delete',
                               style: GoogleFonts.inter(
@@ -263,30 +294,36 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                 onTap: widget.onEdit,
                 child: Container(
                   height: 160,
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0.15),
+                        Colors.blue.withOpacity(0.9),
+                        Colors.cyan.withOpacity(0.9),
+                        Colors.green.withOpacity(0.9),
+                        Colors.greenAccent.withOpacity(0.9),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.3 * _glowAnimation.value),
+                        color:
+                            Colors.blue.withOpacity(0.3 * _glowAnimation.value),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
                       BoxShadow(
-                        color: Colors.cyan.withOpacity(0.2 * _glowAnimation.value),
+                        color:
+                            Colors.cyan.withOpacity(0.2 * _glowAnimation.value),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],
-                    border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+                    border: Border.all(
+                        color: Colors.white.withOpacity(0.2), width: 1),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -326,7 +363,7 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 18,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontStyle: FontStyle.normal,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -339,7 +376,7 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.black.withOpacity(0.9),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -348,13 +385,14 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                 const SizedBox(height: 3),
                                 Flexible(
                                   child: GestureDetector(
-                                    onTap: () => _launchUrl(widget.password.link),
+                                    onTap: () =>
+                                        _launchUrl(widget.password.link),
                                     child: Text(
                                       widget.password.link,
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,
-                                        color: Colors.grey[200],
+                                        color: Colors.blue,
                                         decoration: TextDecoration.underline,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -369,7 +407,7 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
-                                    color: Colors.grey[200],
+                                    color: Colors.grey[600],
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -380,7 +418,7 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
-                                    color: Colors.grey[200],
+                                    color: Colors.grey[600],
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -389,9 +427,11 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.copy, color: Colors.white, size: 24),
+                          icon: const Icon(Icons.copy,
+                              color: Colors.black, size: 24),
                           onPressed: () {
-                            Clipboard.setData(ClipboardData(text: widget.password.password));
+                            Clipboard.setData(
+                                ClipboardData(text: widget.password.password));
                             Fluttertoast.showToast(
                               msg: 'Password copied!',
                               toastLength: Toast.LENGTH_SHORT,
@@ -403,7 +443,8 @@ class _PasswordCardState extends State<PasswordCard> with SingleTickerProviderSt
                           hoverColor: Colors.cyan.withOpacity(0.2),
                         ),
                         PopupMenuButton<String>(
-                          icon: const Icon(Icons.more_vert, color: Colors.white, size: 24),
+                          icon: const Icon(Icons.more_vert,
+                              color: Colors.black, size: 24),
                           color: Colors.white.withOpacity(0.95),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),

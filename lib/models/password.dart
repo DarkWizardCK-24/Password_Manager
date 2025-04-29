@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class PasswordModel extends Equatable {
   final String id;
+  final String userId; // Added to associate with user
   final String username;
   final String password;
   final String socialMedia;
@@ -11,6 +12,7 @@ class PasswordModel extends Equatable {
 
   const PasswordModel({
     required this.id,
+    required this.userId,
     required this.username,
     required this.password,
     required this.socialMedia,
@@ -22,6 +24,7 @@ class PasswordModel extends Equatable {
   factory PasswordModel.fromJson(Map<String, dynamic> json) {
     return PasswordModel(
       id: json['id'] as String,
+      userId: json['userId'] as String,
       username: json['username'] as String,
       password: json['password'] as String,
       socialMedia: json['socialMedia'] as String,
@@ -36,6 +39,7 @@ class PasswordModel extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'userId': userId,
       'username': username,
       'password': password,
       'socialMedia': socialMedia,
@@ -47,6 +51,7 @@ class PasswordModel extends Equatable {
 
   PasswordModel copyWith({
     String? id,
+    String? userId,
     String? username,
     String? password,
     String? socialMedia,
@@ -56,6 +61,7 @@ class PasswordModel extends Equatable {
   }) {
     return PasswordModel(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       username: username ?? this.username,
       password: password ?? this.password,
       socialMedia: socialMedia ?? this.socialMedia,
@@ -68,6 +74,7 @@ class PasswordModel extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        userId,
         username,
         password,
         socialMedia,
