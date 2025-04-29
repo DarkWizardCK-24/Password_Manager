@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:password_manager/screens/login_page.dart';
 import 'package:password_manager/services/firestore_service.dart';
@@ -53,9 +52,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
           _passwordController.text.trim(),
         );
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()));
-      } catch (e) {
-        // Error handled in FirestoreService
-      }
+      } catch (e) {}
     }
   }
 

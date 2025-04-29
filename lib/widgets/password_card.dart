@@ -63,20 +63,10 @@ class _PasswordCardState extends State<PasswordCard>
     switch (socialMedia.toLowerCase()) {
       case 'github':
         return Icons.code;
-      case 'linktree':
-        return Icons.link;
       case 'google':
         return Icons.g_mobiledata;
       case 'mail':
         return Icons.email;
-      case 'instagram':
-        return Icons.camera_alt;
-      case 'linkedin':
-        return Icons.business;
-      case 'youtube':
-        return Icons.videocam;
-      case 'portfolio':
-        return Icons.work;
       case 'others':
         return Icons.lock;
       default:
